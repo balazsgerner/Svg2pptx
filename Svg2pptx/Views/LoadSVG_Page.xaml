@@ -6,8 +6,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid>
-        <TextBlock>Load SVG</TextBlock>
+    
+    <Grid VerticalAlignment="Top" Margin="20">
+        <StackPanel>
+            <StackPanel Margin="50 5">
+                <TextBlock Name="fileFullName">Loaded file: </TextBlock>
+            </StackPanel>
+            <StackPanel Margin="50 0" Orientation="Horizontal">
+                <TextBox Name="fileName" Width="400" MaxWidth="400" PlaceholderText="Select an SVG file..."></TextBox>
+                <Button Margin="5 0 5 0"
+                        Click="BrowseFileAsync" Width="125">Browse File...</Button>
+                <Button Click="LoadFileAsync" Width="125" Background="RoyalBlue" Foreground="WhiteSmoke">
+                    <Button.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="Light">
+                                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="  #4169E1"/>
+                                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="RoyalBlue"/>
+                                    </ResourceDictionary>
+                                </ResourceDictionary.ThemeDictionaries>
+                            </ResourceDictionary>
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="OpenFile"/>
+                        <TextBlock Margin="5 0 0 0">Load SVG</TextBlock>
+                    </StackPanel>
+                    </Button>
+            </StackPanel>
+            <StackPanel Margin="50" >
+                <StackPanel Height="500" Orientation="Horizontal" VerticalAlignment="Top">
+                    <StackPanel Width="300">
+                        <TextBlock>Image preview</TextBlock>
+                        <Image Margin="10" Name="image" Width="280" Height="Auto"></Image>
+                    </StackPanel>
+                <StackPanel Width="1100" Margin="20 0 0 0">
+                    <TextBlock>File Content</TextBlock>
+                    <TextBox ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Name="fileContent"  AcceptsReturn="True" Height="450"></TextBox>
+                </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>
