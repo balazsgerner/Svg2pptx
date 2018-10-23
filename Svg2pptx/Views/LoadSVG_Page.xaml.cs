@@ -28,7 +28,6 @@ namespace Svg2pptx.Views
     /// </summary>
     public sealed partial class LoadSVGPage : Page
     {
-        public StorageFile loadedFile { get; set; }
 
         public LoadSVGPage()
         {
@@ -38,8 +37,17 @@ namespace Svg2pptx.Views
 
         private async void LoadFileAsync(object sender, RoutedEventArgs e)
         {
-            fileContent.Text = PrintXML(await FileIO.ReadTextAsync(loadedFile));
-            image.Source = await LoadImageSource(loadedFile);
+            StorageFile file = ((App)Application.Current).loadedFile;
+            await loadFileDetailsAsync(file);
+        }
+
+        private async Task loadFileDetailsAsync(StorageFile file)
+        {
+            if (file != null)
+            {
+                fileContent.Text = PrintXML(await FileIO.ReadTextAsync(file));
+                image.Source = await LoadImageSource(file);
+            }
         }
 
         private async void BrowseFileAsync(object sender, RoutedEventArgs e)
@@ -48,13 +56,18 @@ namespace Svg2pptx.Views
             openPicker.ViewMode = PickerViewMode.Thumbnail;
             openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             openPicker.FileTypeFilter.Add(".svg");
-            openPicker.FileTypeFilter.Add(".jpg");
 
-            loadedFile = await openPicker.PickSingleFileAsync();
-            if (loadedFile != null)
+            ((App)Application.Current).loadedFile = await openPicker.PickSingleFileAsync();
+            setFileName();
+        }
+
+        private void setFileName()
+        {
+            StorageFile file = ((App)Application.Current).loadedFile;
+            if (file != null)
             {
-                fileName.Text = loadedFile.Name;
-                fileFullName.Text = loadedFile.Path;
+                fileName.Text = file.Name;
+                fileFullName.Text = file.Path;
             }
         }
 
@@ -68,43 +81,48 @@ namespace Svg2pptx.Views
         public string PrintXML(string xml)
         {
             string result = string.Empty;
-            MemoryStream mStream = new MemoryStream();
-            XmlTextWriter writer = new XmlTextWriter(mStream, System.Text.Encoding.Unicode);
             XmlDocument document = new XmlDocument();
 
-            try
+            using (var mStream = new MemoryStream())
+            using (var writer = new XmlTextWriter(mStream, System.Text.Encoding.Unicode))
             {
-                // Load the XmlDocument with the XML.
-                document.LoadXml(xml);
+                try
+                {
+                    // Load the XmlDocument with the XML.
+                    document.LoadXml(xml);
 
-                writer.Formatting = Formatting.Indented;
+                    writer.Formatting = Formatting.Indented;
 
-                // Write the XML into a formatting XmlTextWriter
-                document.WriteContentTo(writer);
-                writer.Flush();
-                mStream.Flush();
+                    // Write the XML into a formatting XmlTextWriter
+                    document.WriteContentTo(writer);
+                    writer.Flush();
+                    mStream.Flush();
 
-                // Have to rewind the MemoryStream in order to read
-                // its contents.
-                mStream.Position = 0;
+                    // Have to rewind the MemoryStream in order to read
+                    // its contents.
+                    mStream.Position = 0;
 
-                // Read MemoryStream contents into a StreamReader.
-                StreamReader sReader = new StreamReader(mStream);
+                    // Read MemoryStream contents into a StreamReader.
+                    StreamReader sReader = new StreamReader(mStream);
 
-                // Extract the text from the StreamReader.
-                string formattedXml = sReader.ReadToEnd();
+                    // Extract the text from the StreamReader.
+                    string formattedXml = sReader.ReadToEnd();
 
-                result = formattedXml;
+                    result = formattedXml;
+                }
+                catch (XmlException)
+                {
+                    // Handle the exception
+                }
+
             }
-            catch (XmlException)
-            {
-                // Handle the exception
-            }
-
-            mStream.Close();
-            writer.Close();
-
             return result;
+        }
+
+        private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
+        {
+            setFileName();
+            await loadFileDetailsAsync(((App)Application.Current).loadedFile);
         }
     }
 
