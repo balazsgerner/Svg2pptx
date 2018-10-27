@@ -17,7 +17,8 @@
                 IsTabStop="False"
                 Header="Load SVG"
                 PaneTitle="SVG 2 PPTX"
-                IsSettingsVisible="False">
+                IsSettingsVisible="False"
+                IsBackButtonVisible="Collapsed">
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="OpenFile" Content="Load SVG" Tag="LoadSVG_Page"/>
                 <NavigationViewItem Icon="Bullets" Content="Manage groups" Tag="ManageGroups_Page"/>

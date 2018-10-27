@@ -16,12 +16,16 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using Svg2pptx.Views;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 namespace Svg2pptx
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// A főoldal, amely a navigációért, azaz az oldalak közötti váltásért felelős.
+    /// <list type="bullet">
+    ///     <listheader>Nézetek:</listheader>
+    ///     <item><term>SVG fájl betöltése</term></item>
+    ///     <item><term>Csoportok láthatóságának módosítása</term></item>
+    ///     <item><term>Prezentáció generálása</term></item>
+    /// </list>
     /// </summary>
     public sealed partial class MainPage : Page
     {
