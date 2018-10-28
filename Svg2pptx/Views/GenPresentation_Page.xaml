@@ -9,5 +9,8 @@
 
     <Grid>
         <TextBlock>Generate presentation</TextBlock>
+        <Button Margin="5 0 5 0"
+                            Click="GeneratePresentation" Width="125">Generate Presentation</Button>
     </Grid>
+    
 </Page>

@@ -57,10 +57,11 @@ namespace Svg2pptx.Views
             FileOpenPicker openPicker = new FileOpenPicker();
             openPicker.ViewMode = PickerViewMode.Thumbnail;
             openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            openPicker.FileTypeFilter.Add(".svg");
+            openPicker.FileTypeFilter.Add(".jpg");
 
             ((App)Application.Current).loadedFile = await openPicker.PickSingleFileAsync();
             setFileName();
+            //Frame.Navigate(typeof(GenPresentation_Page), ((App)Application.Current).loadedFile);
         }
 
         private void setFileName()
@@ -71,6 +72,7 @@ namespace Svg2pptx.Views
                 fileName.Text = file.Name;
                 fileFullName.Text = file.Path;
             }
+            
         }
 
         private async Task<ImageSource> LoadImageSource(StorageFile file)
@@ -110,8 +112,8 @@ namespace Svg2pptx.Views
 
         private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
         {
-            setFileName();
-            await loadFileDetailsAsync(((App)Application.Current).loadedFile);
+            //setFileName();
+            //await loadFileDetailsAsync(((App)Application.Current).loadedFile);
         }
     }
 
