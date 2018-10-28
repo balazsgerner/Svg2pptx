@@ -16,18 +16,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Svg2pptx
+namespace svg
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-        public StorageFile loadedFile { get; set; }
+        public StorageFile LoadedFile { get; set; }
 
-        public string fileContent { get; set; }
+        public string FileContent { get; set; }
 
-        public ImageSource imageSource { get; set; }
+        public ImageSource ImageSource { get; set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

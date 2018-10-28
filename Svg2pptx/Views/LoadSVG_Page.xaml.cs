@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -20,7 +21,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace Svg2pptx.Views
+namespace svg
 {
     /// <summary>
     /// SVG fájl betöltésére szolgáló nézet.
@@ -39,7 +40,7 @@ namespace Svg2pptx.Views
 
         private async void LoadFileAsync(object sender, RoutedEventArgs e)
         {
-            StorageFile file = ((App)Application.Current).loadedFile;
+            StorageFile file = ((App)Application.Current).LoadedFile;
             await loadFileDetailsAsync(file);
         }
 
@@ -47,7 +48,7 @@ namespace Svg2pptx.Views
         {
             if (file != null)
             {
-                fileContent.Text = PrintXML(await FileIO.ReadTextAsync(file));
+                fileContent.Text = await LoadXMLAsync(file);
                 image.Source = await LoadImageSource(file);
             }
         }
@@ -59,13 +60,13 @@ namespace Svg2pptx.Views
             openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             openPicker.FileTypeFilter.Add(".svg");
 
-            ((App)Application.Current).loadedFile = await openPicker.PickSingleFileAsync();
+            ((App)Application.Current).LoadedFile = await openPicker.PickSingleFileAsync();
             setFileName();
         }
 
         private void setFileName()
         {
-            StorageFile file = ((App)Application.Current).loadedFile;
+            StorageFile file = ((App)Application.Current).LoadedFile;
             if (file != null)
             {
                 fileName.Text = file.Name;
@@ -79,39 +80,19 @@ namespace Svg2pptx.Views
             return ImageSource;
         }
 
-        public string PrintXML(string xml)
+        public async Task<string> LoadXMLAsync(StorageFile file)
         {
-            string result = string.Empty;
-            XmlDocument document = new XmlDocument();
-            using (var mStream = new MemoryStream())
-            using (var writer = new XmlTextWriter(mStream, System.Text.Encoding.Unicode))
-            using (var sReader = new StreamReader(mStream))
+            using (var stream = await file.OpenStreamForReadAsync())
             {
-                try
-                {
-                    document.LoadXml(xml);
-                    writer.Formatting = Formatting.Indented;
-
-                    document.WriteContentTo(writer);
-                    writer.Flush();
-                    mStream.Flush();
-
-                    mStream.Position = 0;
-                    result = sReader.ReadToEnd();
-                }
-                catch (XmlException)
-                {
-                    // Error occured while printing XML content
-                }
-
+                XDocument doc = XDocument.Load(stream, LoadOptions.PreserveWhitespace);
+                return doc.ToString();
             }
-            return result;
         }
 
         private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
         {
             setFileName();
-            await loadFileDetailsAsync(((App)Application.Current).loadedFile);
+            await loadFileDetailsAsync(((App)Application.Current).LoadedFile);
         }
     }
 

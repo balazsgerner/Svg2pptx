@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace Svg2pptx.Views
+namespace svg
 {
     /// <summary>
     /// Prezentáció generálásra szolgáló nézet.

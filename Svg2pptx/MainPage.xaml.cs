@@ -14,9 +14,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-using Svg2pptx.Views;
 
-namespace Svg2pptx
+namespace svg
 {
     /// <summary>
     /// A főoldal, amely a navigációért, azaz az oldalak közötti váltásért felelős.
