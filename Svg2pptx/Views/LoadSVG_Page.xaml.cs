@@ -1,5 +1,7 @@
-﻿using System;
+﻿//using Spire.Presentation;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -49,6 +51,7 @@ namespace svg
             if (file != null)
             {
                 fileContent.Text = await LoadXMLAsync(file);
+                ((App)Application.Current).FileContent = fileContent.Text;
                 image.Source = await LoadImageSource(file);
             }
         }
@@ -61,10 +64,10 @@ namespace svg
             openPicker.FileTypeFilter.Add(".svg");
 
             ((App)Application.Current).LoadedFile = await openPicker.PickSingleFileAsync();
-            setFileName();
+            SetFileName();
         }
 
-        private void setFileName()
+        private void SetFileName()
         {
             StorageFile file = ((App)Application.Current).LoadedFile;
             if (file != null)
@@ -85,13 +88,21 @@ namespace svg
             using (var stream = await file.OpenStreamForReadAsync())
             {
                 XDocument doc = XDocument.Load(stream, LoadOptions.PreserveWhitespace);
+
+                XNamespace xmlns = "http://www.w3.org/2000/svg";
+                ((App)Application.Current).GroupNames = doc.Root.Descendants(xmlns + "g")
+                    .Attributes("id")
+                    .Where(item => item != null)
+                    .Select(item => item.Value)
+                    .ToList();
+
                 return doc.ToString();
             }
         }
 
         private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
         {
-            setFileName();
+            SetFileName();
             await loadFileDetailsAsync(((App)Application.Current).LoadedFile);
         }
     }

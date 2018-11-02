@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,6 +29,10 @@ namespace svg
         public string FileContent { get; set; }
 
         public ImageSource ImageSource { get; set; }
+
+        public List<string> GroupNames { get; set; }
+
+        public Dictionary<int, List<string>> VisibleGroupsBySlide { get; set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
