@@ -12,16 +12,20 @@ namespace svg
     /// </summary>
     public sealed partial class ManageGroups_Page : Page
     {
-        public List<string> GroupNames { get; }
+        public List<string> GroupNames { get; set; }
 
         public ManageGroups_Page()
         {
             this.InitializeComponent();
-            GroupNames = ((App)Application.Current).GroupNames;
         }
 
-        private void InitGroups(object sender, RoutedEventArgs e)
+        private void InitGroups()
         {
+            if(GroupNames == null)
+            {
+                return;
+            }
+
             // 1. sor és oszlop
             grid.ColumnDefinitions.Add(new ColumnDefinition
             {
@@ -35,11 +39,14 @@ namespace svg
                 AddGroup(i);
             }
 
-            // slide-ok hozzá adása - 3 dummy slide
-            for (int i = 1; i < 3; i++)
-            {
-                AddSlide(null, null);
+            // ha voltak már elmentve csoportok, akkor azokat töltjük vissza
+            var visibleGroupsBySlide = ((App)Application.Current).VisibleGroupsBySlide;
+            int initialSlideCount = visibleGroupsBySlide != null ? visibleGroupsBySlide.Count : 3;
 
+            // slide-ok hozzá adása
+            for (int i = 0; i < initialSlideCount; i++)
+            {
+                AddSlide(visibleGroupsBySlide);
             }
         }
 
@@ -63,13 +70,17 @@ namespace svg
 
         private void AddSlide(object sender, RoutedEventArgs e)
         {
+            AddSlide(null);
+        }
+
+        private void AddSlide(Dictionary<int, List<string>> groupsMap)
+        {
             grid.ColumnDefinitions.Add(new ColumnDefinition
             {
                 Width = new GridLength(55),
             });
 
             int colIdx = grid.ColumnDefinitions.Count - 1;
-
             var tb = new TextBlock
             {
                 Text = "Slide" + colIdx,
@@ -88,15 +99,14 @@ namespace svg
                 var cb = new CheckBox()
                 {
                     Margin = new Thickness(15, 0, 0, 0),
-                    // random láthatóságot generál
-                    IsChecked = rand.Next(100) <= 50 ? true : false,
+                    // ha volt már elmentve, akkor visszatöltjük az elmentett értéket
+                    IsChecked = groupsMap != null ? groupsMap[colIdx - 1].Contains(GroupNames[j]) : false,
                     VerticalAlignment = VerticalAlignment.Bottom,
                 };
                 grid.Children.Add(cb);
                 Grid.SetRow(cb, j + 1);
                 Grid.SetColumn(cb, colIdx);
             }
-
         }
 
         // az utolsó slide-ot törli (és az oszlop minden elemét)
@@ -116,9 +126,20 @@ namespace svg
             SaveGroups();
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            GroupNames = ((App)Application.Current).GroupNames;
+            InitGroups();
+        }
+
         // elmentjük diánként a látható csoportok nevét
         private void SaveGroups()
         {
+            if(grid.Children.Count == 0)
+            {
+                return;
+            }
+
             var visibleGroupsBySlide = new Dictionary<int, List<string>>();
             int rows = grid.RowDefinitions.Count;
             int columns = grid.ColumnDefinitions.Count;

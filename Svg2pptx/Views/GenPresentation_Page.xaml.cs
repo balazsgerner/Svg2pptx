@@ -29,19 +29,26 @@ namespace svg
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            XNamespace xmlns = "http://www.w3.org/2000/svg";
             var originalFileContent = ((App)Application.Current).FileContent;
+            if(originalFileContent == null)
+            {
+                return;
+            }
+
+            XNamespace xmlns = "http://www.w3.org/2000/svg";
             var visibleGroupsBySlide = ((App)Application.Current).VisibleGroupsBySlide;
             var svgContentBySlide = new Dictionary<int, XDocument>();
 
+            XDocument doc;
             for (int i = 0; i < visibleGroupsBySlide.Count; i++)
             {
                 var groups = visibleGroupsBySlide[i];
-                XDocument doc = XDocument.Parse(originalFileContent);
+                doc = XDocument.Parse(originalFileContent);
 
                 // kitöröljük az összes olyan csoportot, amely nem kell az adott slide-ra
                 var forRemoval = doc.Root.Descendants(xmlns + "g")
-                    .Where(item => !groups.Contains(item.Attribute("id").Value))
+                    .Where(item => (item.Attribute("id") == null) ||
+                        !groups.Contains(item.Attribute("id").Value))
                     .ToList();
                 foreach (var element in forRemoval)
                 {
