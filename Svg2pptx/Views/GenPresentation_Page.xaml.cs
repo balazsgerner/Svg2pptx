@@ -38,11 +38,12 @@ namespace Svg2pptx.Views
             var a = ((App)Application.Current).loadedFile;
 
 
-
+            // save loaded file to C:\Users\***\AppData\Local\Packages\4fb09f32-481f-4c3f-8618-f2f1dbc911d0_4vdk1afx0z06j\LocalState
             MemoryStream stream3 = new MemoryStream();
             (await a.OpenStreamForReadAsync()).CopyTo(stream3);
             StorageFolder storageFolder2 = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile2 = await storageFolder2.CreateFileAsync("sample.svg", CreationCollisionOption.ReplaceExisting);
+            StorageFile sampleFile2 = await storageFolder2.CreateFileAsync("sample.png", CreationCollisionOption.ReplaceExisting);
+
 
             using (var fileStream = await sampleFile2.OpenStreamForWriteAsync())
             {
@@ -50,6 +51,26 @@ namespace Svg2pptx.Views
                 stream3.WriteTo(fileStream);
             }
 
+
+            // read from assets, save it to C:\Users\***\AppData\Local\Packages\4fb09f32-481f-4c3f-8618-f2f1dbc911d0_4vdk1afx0z06j\LocalState
+            MemoryStream stream4 = new MemoryStream();
+            StorageFile sourceFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/sample3.png"));
+            (await sourceFile.OpenStreamForReadAsync()).CopyTo(stream4);
+            StorageFile sampleFile22 = await storageFolder2.CreateFileAsync("sample33.png", CreationCollisionOption.ReplaceExisting);
+
+            //get asets folder
+            StorageFolder appInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder assetsFolder = await appInstalledFolder.GetFolderAsync("Assets");
+
+            //move file from public folder to assets
+            await sampleFile22.MoveAsync(assetsFolder, "new_file.png", NameCollisionOption.ReplaceExisting);
+
+
+            using (var fileStream = await sampleFile22.OpenStreamForWriteAsync())
+            {
+                fileStream.Seek(0, SeekOrigin.Begin);
+                stream4.WriteTo(fileStream);
+            }
 
 
 
@@ -82,21 +103,10 @@ namespace Svg2pptx.Views
 
             //// Adds the image to the slide by specifying position and size
 
-
-
-
-
-
-
             MemoryStream stream2 = new MemoryStream();
             (await a.OpenStreamForReadAsync()).CopyTo(stream2);
             firstSlide.Pictures.AddPicture(stream2, 300, 270, 410, 250);
-
-
-
-
-
-
+            
             //Applies font formatting to the text
             textPart.Font.FontSize = 80;
             textPart.Font.Bold = true;
@@ -116,19 +126,6 @@ namespace Svg2pptx.Views
                     stream.WriteTo(fileStream);
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             presentation.Close();
         }
