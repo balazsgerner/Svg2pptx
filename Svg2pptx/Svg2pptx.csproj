@@ -189,6 +189,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aliencube.CloudConvert.NET">
+      <Version>0.5.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.9</Version>
     </PackageReference>

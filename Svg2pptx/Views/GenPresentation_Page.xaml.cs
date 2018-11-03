@@ -146,23 +146,37 @@ namespace Svg2pptx.Views
             byte[] fileBytes;
             var binaryReader = new BinaryReader(stream);
             fileBytes = binaryReader.ReadBytes((int)stream.Length);
+            string base64 = Convert.ToBase64String(fileBytes);
             var imageBinaryContent = new ByteArrayContent(fileBytes);
-            Stream stream2 = new MemoryStream();
+            //Stream stream2 = new MemoryStream();
 
-            await imageBinaryContent.CopyToAsync(stream2);
-            stream2.Seek(0, SeekOrigin.Begin);
+            //await imageBinaryContent.CopyToAsync(stream2);
+            //stream2.Seek(0, SeekOrigin.Begin);
             var formData = new MultipartFormDataContent();
-            HttpContent content = new StreamContent(stream2);
-            formData.Add(content);
+            //HttpContent content = new StreamContent(stream2);
             var multipartContent = new MultipartFormDataContent();
-            multipartContent.Add(imageBinaryContent, "file");
-            multipartContent.Add(new StringContent("upload"), "input");
+            multipartContent.Add(new StringContent("O6M1sGUhYzreXAq8xXZCNKfEbK6zvLHEj6PbkviP7dvx0m0szoQsG0ACheqLbNNU"), "apikey");
+            multipartContent.Add(new StringContent("base64"), "input");
+            multipartContent.Add(new StringContent("kiwi.svg"), "filename");
+            multipartContent.Add(new StringContent("true"), "wait");
+            multipartContent.Add(new StringContent("inline"), "download");
+            multipartContent.Add(new StringContent("svg"), "inputformat");
+            multipartContent.Add(new StringContent("png"), "outputformat");
 
 
 
             var multipartContentFirst = new MultipartFormDataContent();
+            multipartContentFirst.Add(new StringContent(base64), "file");
+            multipartContentFirst.Add(new StringContent("O6M1sGUhYzreXAq8xXZCNKfEbK6zvLHEj6PbkviP7dvx0m0szoQsG0ACheqLbNNU"), "apikey");
+            multipartContentFirst.Add(new StringContent("base64"), "input");
+            multipartContentFirst.Add(new StringContent("kiwi.svg"), "filename");
+            multipartContentFirst.Add(new StringContent("true"), "wait");
+            multipartContentFirst.Add(new StringContent("false"), "download");
+            multipartContentFirst.Add(new StringContent("svg"), "inputformat");
+            multipartContentFirst.Add(new StringContent("png"), "outputformat");
+            formData.Add(multipartContentFirst);
 
-            multipartContentFirst.Add(new StringContent("upload"), "input");
+            //multipartContentFirst.Add(new StringContent("upload"), "input");
             //Create an HTTP client object
             System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
@@ -183,7 +197,7 @@ namespace Svg2pptx.Views
             //    throw new Exception("Invalid header value: " + header);
             //}
 
-            Uri requestUri = new Uri("https://api.cloudconvert.com/process?inputformat=svg&outputformat=png&apikey=O6M1sGUhYzreXAq8xXZCNKfEbK6zvLHEj6PbkviP7dvx0m0szoQsG0ACheqLbNNU");
+            Uri requestUri = new Uri("https://api.cloudconvert.com/process");
 
             //Send the GET request asynchronously and retrieve the response as a string.
             System.Net.Http.HttpResponseMessage httpResponse = new System.Net.Http.HttpResponseMessage();
@@ -192,43 +206,46 @@ namespace Svg2pptx.Views
             try
             {
                 //Send the GET request
-                httpResponse = await httpClient.GetAsync(requestUri);
+                //httpResponse = await httpClient.GetAsync(requestUri);
+                //httpResponse.EnsureSuccessStatusCode();
+                //httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+
+
+                //Debug.Write(url);
+                httpResponse = await httpClient.PostAsync(new Uri("https://api.cloudconvert.com/process"), multipartContent);
                 httpResponse.EnsureSuccessStatusCode();
                 httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
-
 
                 string id = httpResponseBody.Split("\"url\":\"")[1];
                 string id2 = id.Split("\"")[0];
                 string url = ("https:" + id2).Replace(@"\", "");
-                Debug.Write(url);
-                httpResponse = await httpClient.PostAsync(new Uri(url), multipartContentFirst);
+                httpResponse = await httpClient.PostAsync(new Uri(url), formData);
                 httpResponse.EnsureSuccessStatusCode();
                 httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                //string idO = httpResponseBody.Split("\"output\":")[1];
+                //idO = idO.Split("\"input\":")[0];
+                //idO = idO.Split("\"url\":\"")[1];
+                //string id2O = idO.Split("\",\"expire\"")[0];
+                //string outputurl = ("https:" + id2O).Replace(@"\", "").Replace("\"},", "");
 
-                string idO = httpResponseBody.Split("\"output\":")[1];
-                idO = idO.Split("\"input\":")[0];
-                idO = idO.Split("\"url\":\"")[1];
-                string id2O = idO.Split("\",\"expire\"")[0];
-                string outputurl = ("https:" + id2O).Replace(@"\", "").Replace("\"},", "");
+                //id = httpResponseBody.Split("\"upload\":")[1];
+                //id = id.Split("\"url\":\"")[1];
+                //id2 = id.Split("\"}}")[0];
+                //string url2 = ("https:" + id2).Replace(@"\", "").Replace("\"},", "");
+                //Debug.Write(url);
 
-                id = httpResponseBody.Split("\"upload\":")[1];
-                id = id.Split("\"url\":\"")[1];
-                id2 = id.Split("\"}}")[0];
-                string url2 = ("https:" + id2).Replace(@"\", "").Replace("\"},", "");
-                Debug.Write(url);
+                ////multipartContent.Headers.Add("Content-Length", ((int)stream.Length).ToString());
 
-                //multipartContent.Headers.Add("Content-Length", ((int)stream.Length).ToString());
-
-                httpResponse = await httpClient.PutAsync(new Uri(url2 +"/kiwi.svg"), content);
-                httpResponse.EnsureSuccessStatusCode();
-                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
-                httpResponse = await httpClient.GetAsync(new Uri(url));
-                httpResponse.EnsureSuccessStatusCode();
-                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
-                httpResponse = await httpClient.GetAsync(new Uri(outputurl));
-                httpResponse.EnsureSuccessStatusCode();
-                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
-                var a = 2;
+                //httpResponse = await httpClient.PutAsync(new Uri(url2 +"/kiwi.svg"), content);
+                //httpResponse.EnsureSuccessStatusCode();
+                //httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                //httpResponse = await httpClient.GetAsync(new Uri(url));
+                //httpResponse.EnsureSuccessStatusCode();
+                //httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                //httpResponse = await httpClient.GetAsync(new Uri(outputurl));
+                //httpResponse.EnsureSuccessStatusCode();
+                //httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                //var a = 2;
             }
             catch (Exception ex)
             {
