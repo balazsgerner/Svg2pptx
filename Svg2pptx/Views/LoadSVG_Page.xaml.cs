@@ -57,7 +57,7 @@ namespace Svg2pptx.Views
             FileOpenPicker openPicker = new FileOpenPicker();
             openPicker.ViewMode = PickerViewMode.Thumbnail;
             openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".svg");
 
             ((App)Application.Current).loadedFile = await openPicker.PickSingleFileAsync();
             setFileName();
