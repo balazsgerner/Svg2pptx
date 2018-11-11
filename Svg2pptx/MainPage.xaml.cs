@@ -46,16 +46,17 @@ namespace svg
 
         private void nvTopLevelNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            NavigationViewItem itemContent = sender.SelectedItem as NavigationViewItem;
-            switch(itemContent.Tag)
+            // TODO Ezt ideiglenes csináltam meg így hogy lehessen navigálni, bugos, mert kétszer kell rákattintani, az előző verzió nem működött
+            String itemContent = sender.Header.ToString(); //as NavigationViewItem;
+            switch (itemContent)
             {
-                case "LoadSVG_Page":
+                case "Load SVG":
                     contentFrame.Navigate(typeof(LoadSVGPage));
                     break;
-                case "ManageGroups_Page":
+                case "Manage groups":
                     contentFrame.Navigate(typeof(ManageGroups_Page));
                     break;
-                case "GenPresentation_Page":
+                case "Generate presentation":
                     contentFrame.Navigate(typeof(GenPresentation_Page));
                     break;
             }

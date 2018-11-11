@@ -9,5 +9,22 @@
 
     <Grid>
         <TextBlock>Generate presentation</TextBlock>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+        <StackPanel Name="panel1" Orientation="Horizontal" Margin="0 5 0 0">
+            <TextBox Name="xPos" MinWidth="200" Height="50"  Width="400" MaxWidth="400" PlaceholderText="X position"></TextBox>
+        </StackPanel>
+        <StackPanel Name="panel2" Orientation="Horizontal" Margin="0 5 0 0">
+            <TextBox Name="yPos" MinWidth="200" Height="50" Width="400" MaxWidth="400" PlaceholderText="Y position"></TextBox>
+        </StackPanel>
+        <StackPanel Name="panel3" Orientation="Horizontal" Margin="0 5 0 0">
+            <TextBox Name="width" MinWidth="200" Height="50" Width="400" MaxWidth="400" PlaceholderText="width"></TextBox>
+        </StackPanel>
+        <StackPanel Name="panel4" Orientation="Horizontal" Margin="0 5 0 0">
+            <TextBox Name="height" MinWidth="200" Height="50" Width="400" MaxWidth="400" PlaceholderText="height"></TextBox>
+        </StackPanel>
+        <Button Margin="5 0 5 0"
+                            Click="GeneratePresentation" Width="125">Generate</Button>
+        </StackPanel>
     </Grid>
 </Page>
